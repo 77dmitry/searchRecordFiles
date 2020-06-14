@@ -12,11 +12,11 @@ public class SearchFile {
     public static void main(String[] args) throws IOException {
 
         String parameter = null;
-        if(args[0].equals("-disk")) {
+        if (args[0].equals("-disk")) {
             parameter = "disk";
-        } else if(args[0].equals("-file")) {
+        } else if (args[0].equals("-file")) {
             parameter = "file";
-        } else if(args[0].equals("-read")) {
+        } else if (args[0].equals("-read")) {
             parameter = "read";
         }
 
@@ -45,6 +45,7 @@ public class SearchFile {
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                         if (attrs.isRegularFile() && file.getFileName().toString().endsWith(".txt") && file.getFileName().toString().contains(firstFileName)) {
+                            System.out.println("visitDirectory: " + file.getParent().toString());
                             System.out.println("visitFile: " + file.getFileName());
                         }
                         return FileVisitResult.CONTINUE;
@@ -72,6 +73,7 @@ public class SearchFile {
                             Files.lines(file).forEach(System.out::println);
                             try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(fileName, true)))) {
                                 writer.println(scanner.nextLine());
+                                writer.flush();
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -82,12 +84,13 @@ public class SearchFile {
 
                     @Override
                     public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-                        ;
                         return FileVisitResult.CONTINUE;
                     }
                 });
                 scanner.close();
                 break;
+            default:
+                throw new IllegalArgumentException("Введите корректную команду");
         }
     }
 }
